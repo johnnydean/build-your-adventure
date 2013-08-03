@@ -1,10 +1,11 @@
-# Lesson 1: Build a map
+# Lesson 2: Make a character
 
-## What we're going to do
+## Goals
 
-We're going to be slowly building an adventure game, kind of like Zelda. [Foli](http://warpspire.com/foli/) is a little game I made as an example. Really, the goal here is to experiment.
-
-This first lesson is all about building maps and getting started.
+- Make your character move up and down
+- Change the speed of your character's movement
+- Make the character change direction (sprites) with the direction you're moving
+- Add collision detection with the map
 
 ## Getting set up
 
@@ -12,50 +13,191 @@ This first lesson is all about building maps and getting started.
 
 - Create a folder for your project and put the lesson files there
 
-- Download Sublime Text 2 **[for Mac](http://c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.1.dmg)** or **[for Windows](http://c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.1%20Setup.exe)**
+- Open up `index.html`
 
-- Open up `index.html` in your browser
+## character.js
 
-### Map.js
+`character.js` is where we're going to be working today. There's a basic character already set up to move left and right around the map.
 
-`map.js` is where we're going to be working today. We've already set a basic template, so we can focus on learning one thing at a time. Today we're going to talk about drawing maps, which is done with **`map.loadData`**.
+## Move up and down
 
-- Let's change some numbers to see what happens
+The first thing we're going to be doing is getting our character to move up and down. The `movement` function controls this right now, so we're going to add to it.
 
-### Sprites
+``` javascript
+function movement(){
 
-This all works because of sprites.
+  x = this.x
+  y = this.y
 
-![](https://f.cloud.github.com/assets/334891/667369/1839af70-d7f0-11e2-883c-5644b76137fc.png)
+  if (game.input.left) {
+    x -= 1
+  }
+  if (game.input.right) {
+    x += 1
+  }
+  if (game.input.up) {
+    y -= 1
+  }
+  if (game.input.down) {
+    y += 1
+  }
 
-Sprites are little squares all squished into one image. We tell the framework which one to use, and it knows how to slice it up.
+  this.x = x
+  this.y = y
 
-### Arrays
-
-Arrays are one of the basic building blocks of programming. They're a lot like a list. They can have lots of things in them, like numbers or words.
-
-- `[0, 1, 2, 3, 4]`
-- `["Hello", "my", "name", "is", "Kyle"]`
-
-Arrays can even have other arrays inside of them!
-
+}
 ```
-[
-  [0, 1, 2, 3],
-  [4, 5, 6, 7]
-]
+
+## Change the speed
+
+To change the speed, all we need to do is add different numbers each time you press right. To make your character move faster in the *up* direction, change this line to a 2:
+
+``` javascript
+if (game.input.up) {
+  y -= 2
+}
 ```
 
-For our map, we use arrays to draw each line of the map.
+### With variables
+
+If we want to control the speed everywhere in the game, we can use a variable and multiply each movement by it. Right above the movement function, let's declare a variable called **`speed`** and use it in the function
+
+``` javascript
+speed = 2
+
+function movement(){
+
+  x = this.x
+  y = this.y
+
+  if (game.input.left) {
+    x -= 1 * speed
+  }
+  if (game.input.right) {
+    x += 1 * speed
+  }
+  if (game.input.up) {
+    y -= 1 * speed
+  }
+  if (game.input.down) {
+    y += 1 * speed
+  }
+
+  this.x = x
+  this.y = y
+
+}
+```
+
+## Make your character point in the right direction
+
+This is the line that decides which one of the sprites to use for your character:
+
+``` javascript
+character.frame = 0
+```
+
+What we're going to do is change this each time the character moves. So we're going to change the `movement` function again:
+
+``` javascript
+function movement(){
+
+  x = this.x
+  y = this.y
+
+  if (game.input.left) {
+    x -= 1 * speed
+    character.frame = 3
+  }
+  if (game.input.right) {
+    x += 1 * speed
+    character.frame = 6
+  }
+  if (game.input.up) {
+    y -= 1 * speed
+    character.frame = 9
+  }
+  if (game.input.down) {
+    y += 1 * speed
+    character.frame = 0
+  }
+
+  this.x = x
+  this.y = y
+
+}
+```
+
+## Collision detection
+
+The first rule in programming is to steal as much as you can. So let's copy and paste this into `map.js`
+
+``` javascript
+map.collisionData =
+  [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ]
+```
+
+This map identifies which parts of your map are solid, and which parts the character can walk through. A `0` is free space while a `1` is a wall.
+
+``` javascript
+// Did our character run into something?
+
+var top = this.y
+var bottom = this.y + 32
+var left = this.x
+var right = this.x + 32
+
+
+if (map.hitTest(left, top)){
+  this.x += 2
+  this.y += 2
+  return
+}
+if (map.hitTest(right, top)){
+  this.x -= 2
+  this.y += 2
+  return
+}
+if (map.hitTest(left, bottom)){
+  this.x += 2
+  this.y -= 2
+  return
+}
+if (map.hitTest(right, bottom)){
+  this.x -= 2
+  this.y -= 2
+  return
+}
+```
+
+We had to test four different points because your character isn't just one pixel big.
+
+![](http://cl.ly/image/0S301o0G220i/content)
+
+We ended up checking four different points:
+
+![](http://cl.ly/image/3B3l100n3x2W/content)
 
 ## Your assignment
 
-Now that we've gone over this, I want you to build an island in the water.
+Make the wall in the map an obstacle.
 
 ## Free time
 
-- [Download our game template]()
-
-- Move it into your project folder and give it a name
-
-- Open up `game.js` and design your own map!
+In your game template, make any obstacles solid that you'd like.
